@@ -3,3 +3,7 @@ uvicorn[standard]
 pydantic
 pydantic-settings
 python-dotenv
+sqlalchemy
+psycopg2-binary
+chromadb
+langchain-text-splitters
