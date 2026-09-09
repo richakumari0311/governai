@@ -30,10 +30,10 @@ def add_chunks(collection, chunks: list[Chunk]) -> None:
     )
 
 
-def query_collection(collection, query_text: str, n_results: int = 5):
-    """Embed a query and return the n_results nearest chunks from the collection."""
+def query_collection(collection, query_text: str, n_results: int = 5, where: dict | None = None):
+    """Embed a query and return the n_results nearest chunks, optionally filtered by metadata."""
     query_embedding = embed_texts([query_text])[0]
-    return collection.query(
-        query_embeddings=[query_embedding],
-        n_results=n_results,
-    )
+    kwargs = {"query_embeddings": [query_embedding], "n_results": n_results}
+    if where:
+        kwargs["where"] = where
+    return collection.query(**kwargs)

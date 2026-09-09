@@ -1,9 +1,19 @@
 from google import genai
 from google.genai import types
+from tenacity import retry, wait_exponential, stop_after_attempt
 from src.config import settings
 from src.rag.store import get_collection, query_collection
 
 client = genai.Client(api_key=settings.gemini_api_key)
+
+
+@retry(wait=wait_exponential(multiplier=2, min=15, max=90), stop=stop_after_attempt(5))
+def _generate(model: str, prompt: str, system_instruction: str):
+    return client.models.generate_content(
+        model=model,
+        contents=prompt,
+        config=types.GenerateContentConfig(system_instruction=system_instruction),
+    )
 
 
 def make_domain_agent(domain_name: str, allowed_sources: list[str]):
@@ -15,9 +25,11 @@ does not contain enough information to answer confidently, say so explicitly rat
 than guessing. Do not use any outside knowledge. Cite which source document each
 fact comes from."""
 
+    where_filter = {"source": {"$in": allowed_sources}}
+
     def answer_question(question: str, n_results: int = 5) -> dict:
         collection = get_collection("governai")
-        results = query_collection(collection, question, n_results=n_results)
+        results = query_collection(collection, question, n_results=n_results, where=where_filter)
 
         retrieved_chunks = results["documents"][0]
         retrieved_sources = [m["source"] for m in results["metadatas"][0]]
@@ -29,11 +41,7 @@ fact comes from."""
 
         prompt = f"Context:\n{context}\n\nQuestion: {question}"
 
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(system_instruction=system_instruction),
-        )
+        response = _generate("gemini-3.5-flash-lite", prompt, system_instruction)
 
         return {
             "answer": response.text,
