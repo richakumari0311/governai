@@ -1,0 +1,44 @@
+rules:
+  - id: finance_travel_limit
+    domain: Finance
+    description: "Travel expense per trip must not exceed the level-based limit"
+    type: numeric_max
+    field: travel_per_trip
+    limits:
+      Associate: 500
+      Senior Associate: 750
+      Manager: 1200
+      Senior Manager: 2000
+      Director: 3500
+
+  - id: finance_meals_limit
+    domain: Finance
+    description: "Meal expense per day must not exceed the level-based limit"
+    type: numeric_max
+    field: meals_per_day
+    limits:
+      Associate: 40
+      Senior Associate: 50
+      Manager: 60
+      Senior Manager: 75
+      Director: 100
+
+  - id: hr_leave_carry_forward
+    domain: HR
+    description: "Leave carried forward must not exceed the level-based limit"
+    type: numeric_max
+    field: carry_forward_days
+    limits:
+      Associate: 5
+      Senior Associate: 5
+      Manager: 8
+      Senior Manager: 8
+      Director: 10
+
+  - id: support_p1_response
+    domain: Support
+    description: "P1 tickets must receive first response within the SLA window"
+    type: numeric_max
+    field: response_minutes
+    limits:
+      P1: 15
