@@ -1,0 +1,77 @@
+qa_cases:
+  - question: "How many leave days does a Manager get?"
+    expected_domain: [HR]
+    expected_source: hr_leave_policy.md
+    in_scope: true
+
+  - question: "What's the travel reimbursement limit for a Senior Manager?"
+    expected_domain: [Finance]
+    expected_source: finance_reimbursement_policy.md
+    in_scope: true
+
+  - question: "How fast should a P1 ticket get a first response?"
+    expected_domain: [Support]
+    expected_source: support_it_policy.md
+    in_scope: true
+
+  - question: "What's the carry-forward limit for a Director?"
+    expected_domain: [HR]
+    expected_source: hr_leave_policy.md
+    in_scope: true
+
+  - question: "How long do I have to submit an expense claim?"
+    expected_domain: [Finance]
+    expected_source: finance_reimbursement_policy.md
+    in_scope: true
+
+  - question: "What happens if a P3 ticket isn't resolved within the escalation window?"
+    expected_domain: [Support]
+    expected_source: support_it_policy.md
+    in_scope: true
+
+  - question: "How do I expense a laptop I need for remote work?"
+    expected_domain: [Finance, Support]
+    expected_source: finance_reimbursement_policy.md
+    in_scope: true
+
+  - question: "What's the company's stock option vesting schedule?"
+    expected_domain: [HR]
+    expected_source: null
+    in_scope: false
+
+  - question: "What's the CEO's compensation package?"
+    expected_domain: [HR]
+    expected_source: null
+    in_scope: false
+
+  - question: "Can I get reimbursed for my gym membership?"
+    expected_domain: [Finance]
+    expected_source: null
+    in_scope: false
+
+policy_cases:
+  - description: "Manager, travel, over limit"
+    rule_id: finance_travel_limit
+    level: Manager
+    value: 1500
+    expected_action: auto_reject
+
+  - description: "Manager, travel, within limit"
+    rule_id: finance_travel_limit
+    level: Manager
+    value: 900
+    expected_action: auto_approve
+
+  - description: "Director, meals, over limit"
+    rule_id: finance_meals_limit
+    level: Director
+    value: 150
+    expected_action: auto_reject
+
+  - description: "Undefined level, forces escalation"
+    rule_id: finance_travel_limit
+    level: Intern
+    value: 100
+    expected_action: human_approval
+    policy_context: "Travel reimbursement limits are defined per employee level: Associate $500, Senior Associate $750, Manager $1200, Senior Manager $2000, Director $3500. No limit is defined for Intern-level employees."
+    situation: "An Intern submitted a $100 travel expense claim. No policy limit exists for the Intern level."

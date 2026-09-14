@@ -9,10 +9,12 @@ client = genai.Client(api_key=settings.gemini_api_key)
 ROUTER_INSTRUCTION = """You are a routing classifier for an enterprise assistant with
 three domains: HR, Finance, and Support. Given a user question, output a confidence
 score from 0 to 1 for each domain, reflecting how relevant that domain is to
-answering the question. A question can be relevant to multiple domains if it
-genuinely spans them. Respond ONLY with valid JSON in this exact format, no other
-text: {"HR": 0.0, "Finance": 0.0, "Support": 0.0}"""
-
+answering the question. Score a domain low (below 0.3) if the question does not
+genuinely require that domain's documents to answer, even if the topic is loosely
+related in a general business sense. A question can be relevant to multiple domains
+only if it genuinely spans them (e.g. an equipment purchase touches both Finance
+reimbursement and Support/IT equipment policy). Respond ONLY with valid JSON in this
+exact format, no other text: {"HR": 0.0, "Finance": 0.0, "Support": 0.0}"""
 
 @retry(wait=wait_exponential(multiplier=2, min=15, max=90), stop=stop_after_attempt(5))
 def classify_query(question: str) -> dict:
