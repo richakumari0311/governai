@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from src.graph.build import build_graph
 
-app = FastAPI(title="GovernAI", description="Governed multi-agent enterprise assistant")
+app = FastAPI(title="Enterprise Copilot", description="Governed multi-agent enterprise assistant")
 graph = build_graph()
 
 

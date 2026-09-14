@@ -1,4 +1,4 @@
-# GovernAI
+# Enterprise Copilot
 
 A governed multi-agent enterprise assistant. Routes employee questions to domain-specific
 agents (HR, Finance, Support), grounds every answer in retrieved policy documents, and

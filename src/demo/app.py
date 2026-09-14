@@ -3,8 +3,8 @@ import requests
 
 API_URL = "http://localhost:8000"
 
-st.set_page_config(page_title="GovernAI", layout="centered")
-st.title("GovernAI")
+st.set_page_config(page_title="Enterprise Copilot", layout="centered")
+st.title("Enterprise Copilot")
 st.caption("Governed multi-agent enterprise assistant — HR, Finance, Support")
 
 question = st.text_area("Ask a question", placeholder="How many leave days does a Manager get?")
