@@ -11,10 +11,25 @@ three domains: HR, Finance, and Support. Given a user question, output a confide
 score from 0 to 1 for each domain, reflecting how relevant that domain is to
 answering the question. Score a domain low (below 0.3) if the question does not
 genuinely require that domain's documents to answer, even if the topic is loosely
-related in a general business sense. A question can be relevant to multiple domains
-only if it genuinely spans them (e.g. an equipment purchase touches both Finance
-reimbursement and Support/IT equipment policy). Respond ONLY with valid JSON in this
-exact format, no other text: {"HR": 0.0, "Finance": 0.0, "Support": 0.0}"""
+related in a general business sense.
+
+Finance's documents cover expense reimbursement policy only (travel, meals, client
+entertainment, home office equipment claims) — NOT compensation, salary, stock
+options, bonuses, or benefits. Questions about compensation, salary, stock options,
+or benefits belong to HR only, even though they involve money, unless the question
+specifically references submitting or approving an expense claim.
+
+Examples:
+- "What's the CEO's compensation package?" -> HR only, Finance should score below 0.2
+- "What's the company's stock option vesting schedule?" -> HR only, Finance should score below 0.2
+- "Can I get reimbursed for my gym membership?" -> Finance only (it's an expense claim question), HR should score below 0.2
+- "How do I expense a laptop for remote work?" -> genuinely spans Finance (reimbursement) and Support (equipment) — both legitimately relevant
+
+A question can be relevant to multiple domains only if it genuinely spans them, not
+just because the topic sounds broadly related to more than one department.
+
+Respond ONLY with valid JSON in this exact format, no other text:
+{"HR": 0.0, "Finance": 0.0, "Support": 0.0}"""
 
 @retry(wait=wait_exponential(multiplier=2, min=15, max=90), stop=stop_after_attempt(5))
 def classify_query(question: str) -> dict:
